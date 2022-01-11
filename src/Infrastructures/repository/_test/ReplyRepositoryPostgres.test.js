@@ -9,7 +9,6 @@ const ReplyRepositoryPostgres = require('../ReplyRepositoryPostgres');
 
 const NewReply = require('../../../Domains/replies/entities/NewReply');
 const AddedReply = require('../../../Domains/replies/entities/AddedReply');
-const ReplyDetails = require('../../../Domains/replies/entities/ReplyDetails');
 
 describe('ReplyRepositoryPostgres', () => {
   afterEach(async () => {
@@ -20,7 +19,7 @@ describe('ReplyRepositoryPostgres', () => {
   });
 
   afterAll(async () => {
-    pool.end();
+    await pool.end();
   });
 
   describe('verifyReplyOnCommentOnThreadById function', () => {
@@ -277,14 +276,24 @@ describe('ReplyRepositoryPostgres', () => {
         threadId: 'thread-123',
       });
 
+      await CommentsTableTestHelper.addComment({
+        id: 'comment-456',
+        content: 'ini adalah komentar kedua',
+        createdAt: now,
+        owner: 'user-456',
+        threadId: 'thread-123',
+      });
+
+      const replDate1 = new Date(now.setSeconds(now.getSeconds() + 1));
       await RepliesTableTestHelper.addReplies({
         id: 'reply-456',
         owner: 'user-456',
         threadId: 'thread-123',
         commentId: 'comment-123',
-        createdAt: now,
+        createdAt: replDate1,
       });
 
+      const replDate2 = new Date(now.setSeconds(now.getSeconds() + 2));
       await RepliesTableTestHelper.addReplies({
         id: 'reply-123',
         owner: 'user-123',
@@ -292,29 +301,76 @@ describe('ReplyRepositoryPostgres', () => {
         commentId: 'comment-123',
         isDeleted: true,
         content: 'balasan kedua',
-        createdAt: now,
+        createdAt: replDate2,
+      });
+
+      const replDate3 = new Date(now.setSeconds(now.getSeconds() + 3));
+      await RepliesTableTestHelper.addReplies({
+        id: 'reply-789',
+        owner: 'user-456',
+        threadId: 'thread-123',
+        commentId: 'comment-456',
+        content: 'balasan kedua kalinya maneh',
+        createdAt: replDate3,
+      });
+
+      const replDate4 = new Date(now.setSeconds(now.getSeconds() + 4));
+      await RepliesTableTestHelper.addReplies({
+        id: 'reply-098',
+        owner: 'user-123',
+        threadId: 'thread-123',
+        commentId: 'comment-456',
+        isDeleted: true,
+        content: 'balasan kedua kalinya',
+        createdAt: replDate4,
       });
 
       const replyRepository = new ReplyRepositoryPostgres(pool, {});
-      const commentReplies = await replyRepository.getReplyDetailsOnThread('thread-123', 'comment-123');
+      const commentReplies = await replyRepository.getReplyDetailsOnThread('thread-123', ['comment-123', 'comment-456']);
 
-      expect(commentReplies).toHaveLength(2);
-      expect(commentReplies[0]).toStrictEqual(new ReplyDetails({
-        id: 'reply-456',
-        username: 'userkedua',
-        date: now.toISOString(),
-        content: 'ini adalah sebuah balasan',
-        isDeleted: false,
-        replies: [],
-      }));
-      expect(commentReplies[1]).toStrictEqual(new ReplyDetails({
-        id: 'reply-123',
-        username: 'userpertama',
-        date: now.toISOString(),
-        content: 'balasan kedua',
-        isDeleted: true,
-        replies: [],
-      }));
+      expect(commentReplies).toHaveLength(4);
+      expect(commentReplies).toStrictEqual([
+        {
+          id: 'reply-456',
+          content: 'ini adalah sebuah balasan',
+          owner: 'user-456',
+          thread_id: 'thread-123',
+          comment_id: 'comment-123',
+          is_delete: false,
+          created_at: replDate1,
+          username: 'userkedua',
+        },
+        {
+          id: 'reply-123',
+          content: 'balasan kedua',
+          owner: 'user-123',
+          thread_id: 'thread-123',
+          comment_id: 'comment-123',
+          is_delete: true,
+          created_at: replDate2,
+          username: 'userpertama',
+        },
+        {
+          id: 'reply-789',
+          content: 'balasan kedua kalinya maneh',
+          owner: 'user-456',
+          thread_id: 'thread-123',
+          comment_id: 'comment-456',
+          is_delete: false,
+          created_at: replDate3,
+          username: 'userkedua',
+        },
+        {
+          id: 'reply-098',
+          content: 'balasan kedua kalinya',
+          owner: 'user-123',
+          thread_id: 'thread-123',
+          comment_id: 'comment-456',
+          is_delete: true,
+          created_at: replDate4,
+          username: 'userpertama',
+        },
+      ]);
     });
     it('should return an empty array if the thread and comment doesnt have any reply', async () => {
       const now = new Date();
@@ -341,7 +397,7 @@ describe('ReplyRepositoryPostgres', () => {
       });
 
       const replyRepository = new ReplyRepositoryPostgres(pool, {});
-      const commentReplies = await replyRepository.getReplyDetailsOnThread('thread-123', 'comment-123');
+      const commentReplies = await replyRepository.getReplyDetailsOnThread('thread-123', ['comment-123']);
 
       expect(commentReplies).toHaveLength(0);
     });

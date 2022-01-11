@@ -35,6 +35,9 @@ const DeleteCommentFromThreadUseCase = require('../Applications/use_case/DeleteC
 const GetThreadDetailsUseCase = require('../Applications/use_case/GetThreadDetailsUseCase');
 const AddReplyToCommentUseCase = require('../Applications/use_case/AddReplyToCommentUseCase');
 const DeleteReplyUseCase = require('../Applications/use_case/DeleteReplyUseCase');
+const LikeRepository = require('../Domains/likes/LikeRepository');
+const LikeRepositoryPostgres = require('./repository/LikeRepositoryPostgres');
+const LikeCommentActionUseCase = require('../Applications/use_case/LikeCommentActionUseCase');
 
 // creating container
 const container = createContainer();
@@ -98,6 +101,20 @@ container.register([
     },
   },
   {
+    key: LikeRepository.name,
+    Class: LikeRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+        {
+          concrete: nanoid,
+        },
+      ],
+    },
+  },
+  {
     key: AuthenticationRepository.name,
     Class: AuthenticationRepositoryPostgres,
     parameter: {
@@ -134,6 +151,23 @@ container.register([
 
 // registering use cases
 container.register([
+  {
+    key: LikeCommentActionUseCase.name,
+    Class: LikeCommentActionUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'commentRepository',
+          internal: CommentRepository.name,
+        },
+        {
+          name: 'likeRepository',
+          internal: LikeRepository.name,
+        },
+      ],
+    },
+  },
   {
     key: AddUserUseCase.name,
     Class: AddUserUseCase,
@@ -228,6 +262,10 @@ container.register([
         {
           name: 'replyRepository',
           internal: ReplyRepository.name,
+        },
+        {
+          name: 'likeRepository',
+          internal: LikeRepository.name,
         },
       ],
     },

@@ -208,6 +208,12 @@ describe('/threads endpoint', () => {
       const fComment = firstCommentJson.data.addedComment;
 
       await server.inject({
+        method: 'PUT',
+        url: `/threads/${thread.id}/comments/${fComment.id}/likes`,
+        headers: { Authorization: `Bearer ${fCommAccessToken}` },
+      });
+
+      await server.inject({
         method: 'POST',
         url: `/threads/${thread.id}/comments/${fComment.id}/replies`,
         payload: {
@@ -284,6 +290,8 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread.comments[0].username).toBeDefined();
       expect(responseJson.data.thread.comments[0].date).toBeDefined();
       expect(responseJson.data.thread.comments[0].content).toBeDefined();
+      expect(responseJson.data.thread.comments[0].likeCount).toBeDefined();
+      expect(responseJson.data.thread.comments[0].likeCount).toEqual(1);
       expect(responseJson.data.thread.comments[0].replies).toBeDefined();
       expect(responseJson.data.thread.comments[0].replies).toHaveLength(2);
       expect(responseJson.data.thread.comments[1].content).toEqual('**komentar telah dihapus**');

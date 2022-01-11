@@ -21,7 +21,7 @@ describe('ThreadRepositoryPostgres', () => {
   });
 
   afterAll(async () => {
-    pool.end();
+    await pool.end();
   });
 
   describe('verifyThreadById', () => {

@@ -64,34 +64,18 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     await this._pool.query(query);
   }
 
-  async getReplyDetailsOnThread(threadId, commentId) {
+  async getReplyDetailsOnThread(threadId, commentIds) {
     const query = {
       text: `SELECT replies.*, users.username 
         FROM replies 
         LEFT JOIN users ON replies.owner=users.id 
-        WHERE replies.thread_id = $1 AND replies.comment_id = $2
+        WHERE replies.thread_id = $1 AND replies.comment_id = ANY($2::text[])
         ORDER BY created_at`,
-      values: [threadId, commentId],
+      values: [threadId, commentIds],
     };
 
     const res = await this._pool.query(query);
-
-    const commentReplies = [];
-
-    // eslint-disable-next-line no-restricted-syntax
-    for (const row of res.rows) {
-      commentReplies.push(
-        new ReplyDetails({
-          id: row.id,
-          username: row.username,
-          date: row.created_at.toISOString(),
-          content: row.content,
-          isDeleted: row.is_delete,
-        }),
-      );
-    }
-
-    return commentReplies;
+    return res.rows;
   }
 }
 

@@ -40,10 +40,9 @@ describe('DeleteCommentFromThread use case', () => {
     const mockCommentRepo = new CommentRepository();
 
     // mock repo
-    mockCommentRepo.verifyCommentOnThreadById = jest.fn()
-      .mockImplementation(() => Promise.resolve());
-    mockCommentRepo.verifyCommentAuthor = jest.fn().mockImplementation(() => Promise.resolve());
-    mockCommentRepo.deleteCommentFromThread = jest.fn().mockImplementation(() => Promise.resolve());
+    mockCommentRepo.verifyCommentOnThreadById = jest.fn(() => Promise.resolve());
+    mockCommentRepo.verifyCommentAuthor = jest.fn(() => Promise.resolve());
+    mockCommentRepo.deleteCommentFromThread = jest.fn(() => Promise.resolve());
 
     const deleteCommentFromThreadUseCase = new DeleteCommentFromThreadUseCase(
       { commentRepository: mockCommentRepo },
