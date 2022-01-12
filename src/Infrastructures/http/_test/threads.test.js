@@ -202,7 +202,7 @@ describe('/threads endpoint', () => {
         url: `/threads/${thread.id}/comments/${fComment.id}/likes`,
         headers: { Authorization: `Bearer ${fCommAccessToken}` },
       });
-
+      
       await server.inject({
         method: 'POST',
         url: `/threads/${thread.id}/comments/${fComment.id}/replies`,
@@ -211,7 +211,7 @@ describe('/threads endpoint', () => {
         },
         headers: { Authorization: `Bearer ${fCommAccessToken}` },
       });
-
+      
       const response = await server.inject({
         method: 'GET',
         url: `/threads/${thread.id}`,
@@ -237,6 +237,7 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread.comments[0].replies).toBeDefined();
       expect(responseJson.data.thread.comments[0].replies).toHaveLength(1);
     });
+    
     it('should response 404 when the thread id provided is invalid', async () => {
       const server = await createServer(container);
 
