@@ -130,10 +130,6 @@ describe('/threads endpoint', () => {
         username: 'firstcommenter',
         password: 'secret',
       };
-      const secondCommenterLoginPayload = {
-        username: 'secondcommenter',
-        password: 'secret',
-      };
 
       const server = await createServer(container);
 
@@ -154,16 +150,6 @@ describe('/threads endpoint', () => {
           username: 'firstcommenter',
           password: 'secret',
           fullname: 'Dicoding123',
-        },
-      });
-
-      await server.inject({
-        method: 'POST',
-        url: '/users',
-        payload: {
-          username: 'secondcommenter',
-          password: 'secret',
-          fullname: 'Dicoding456',
         },
       });
 
@@ -225,54 +211,6 @@ describe('/threads endpoint', () => {
         headers: { Authorization: `Bearer ${fCommAccessToken}` },
       });
 
-      const sCommLoginResponse = await server.inject({
-        method: 'POST',
-        url: '/authentications',
-        payload: secondCommenterLoginPayload,
-      });
-
-      const sCommLoginResponseJson = JSON.parse(sCommLoginResponse.payload);
-      const { accessToken: sCommAccessToken } = sCommLoginResponseJson.data;
-
-      const sReplyResponse = await server.inject({
-        method: 'POST',
-        url: `/threads/${thread.id}/comments/${fComment.id}/replies`,
-        payload: {
-          content: 'ini adalah sebuah balasan komentar dari pengguna kedua',
-        },
-        headers: { Authorization: `Bearer ${sCommAccessToken}` },
-      });
-
-      const sReplyResponseJson = JSON.parse(sReplyResponse.payload);
-      const sReply = sReplyResponseJson.data.addedReply;
-
-      await server.inject({
-        method: 'DELETE',
-        url: `/threads/${thread.id}/comments/${fComment.id}/replies/${sReply.id}`,
-        payload: {
-          content: 'ini adalah sebuah balasan komentar dari pengguna kedua',
-        },
-        headers: { Authorization: `Bearer ${sCommAccessToken}` },
-      });
-
-      const secondComment = await server.inject({
-        method: 'POST',
-        url: `/threads/${thread.id}/comments`,
-        payload: {
-          content: 'ini adalah sebuah komentar dari pengguna kedua',
-        },
-        headers: { Authorization: `Bearer ${sCommAccessToken}` },
-      });
-
-      const secondCommentJson = JSON.parse(secondComment.payload);
-      const comment = secondCommentJson.data.addedComment;
-
-      await server.inject({
-        method: 'DELETE',
-        url: `/threads/${thread.id}/comments/${comment.id}`,
-        headers: { Authorization: `Bearer ${sCommAccessToken}` },
-      });
-
       const response = await server.inject({
         method: 'GET',
         url: `/threads/${thread.id}`,
@@ -288,7 +226,7 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread.date).toBeDefined();
       expect(responseJson.data.thread.username).toBeDefined();
       expect(responseJson.data.thread.comments).toBeDefined();
-      expect(responseJson.data.thread.comments).toHaveLength(2);
+      expect(responseJson.data.thread.comments).toHaveLength(1);
       expect(responseJson.data.thread.comments[0].id).toBeDefined();
       expect(responseJson.data.thread.comments[0].username).toBeDefined();
       expect(responseJson.data.thread.comments[0].date).toBeDefined();
@@ -296,9 +234,7 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.thread.comments[0].likeCount).toBeDefined();
       expect(responseJson.data.thread.comments[0].likeCount).toEqual(1);
       expect(responseJson.data.thread.comments[0].replies).toBeDefined();
-      expect(responseJson.data.thread.comments[0].replies).toHaveLength(2);
-      expect(responseJson.data.thread.comments[1].content).toEqual('**komentar telah dihapus**');
-      expect(responseJson.data.thread.comments[0].replies[1].content).toEqual('**balasan telah dihapus**');
+      expect(responseJson.data.thread.comments[0].replies).toHaveLength(1);
     });
     it('should response 404 when the thread id provided is invalid', async () => {
       const server = await createServer(container);
