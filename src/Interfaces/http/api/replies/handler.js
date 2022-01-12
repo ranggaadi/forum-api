@@ -29,7 +29,7 @@ class RepliesHandler {
     return response;
   }
 
-  async deleteReplyHandler({ payload, auth, params }, h) {
+  async deleteReplyHandler({ auth, params }) {
     const deleteReplyUseCase = this._container
       .getInstance(DeleteReplyUseCase.name);
 
@@ -42,11 +42,9 @@ class RepliesHandler {
 
     await deleteReplyUseCase.execute(useCasePayload);
 
-    const response = h.response({
+    return {
       status: 'success',
-    });
-    response.code(200);
-    return response;
+    };
   }
 }
 

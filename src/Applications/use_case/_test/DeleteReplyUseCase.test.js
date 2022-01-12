@@ -43,10 +43,9 @@ describe('DeleteReply use case', () => {
     const mockReplyRepo = new ReplyRepository();
 
     // mock repo
-    mockReplyRepo.verifyReplyOnCommentOnThreadById = jest.fn()
-      .mockImplementation(() => Promise.resolve());
-    mockReplyRepo.verifyReplyAuthor = jest.fn().mockImplementation(() => Promise.resolve());
-    mockReplyRepo.deleteReply = jest.fn().mockImplementation(() => Promise.resolve());
+    mockReplyRepo.verifyReplyOnCommentOnThreadById = jest.fn(() => Promise.resolve());
+    mockReplyRepo.verifyReplyAuthor = jest.fn(() => Promise.resolve());
+    mockReplyRepo.deleteReply = jest.fn(() => Promise.resolve());
 
     const deleteReplyUseCase = new DeleteReplyUseCase(
       { replyRepository: mockReplyRepo },

@@ -28,7 +28,7 @@ class CommentsHandler {
     return response;
   }
 
-  async deleteCommentHandler({ auth, params }, h) {
+  async deleteCommentHandler({ auth, params }) {
     const deleteCommentFromThreadUseCase = this._container
       .getInstance(DeleteCommentFromThreadUseCase.name);
 
@@ -40,11 +40,9 @@ class CommentsHandler {
 
     await deleteCommentFromThreadUseCase.execute(useCasePayload);
 
-    const response = h.response({
+    return {
       status: 'success',
-    });
-    response.code(200);
-    return response;
+    };
   }
 }
 

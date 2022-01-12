@@ -22,8 +22,7 @@ describe('Add Comment to Thread use case', () => {
     const mockThreadRepo = new ThreadRepository();
     const mockCommentRepo = new CommentRepository();
 
-    mockThreadRepo.verifyThreadById = jest.fn()
-      .mockImplementation(() => Promise.resolve());
+    mockThreadRepo.verifyThreadById = jest.fn(() => Promise.resolve());
 
     mockCommentRepo.addCommentToThread = jest.fn()
       .mockImplementation(() => Promise.resolve(expectedOutput));

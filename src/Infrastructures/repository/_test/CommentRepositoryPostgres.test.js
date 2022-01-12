@@ -18,7 +18,7 @@ describe('CommentRepositoryPostgres', () => {
   });
 
   afterAll(async () => {
-    pool.end();
+    await pool.end();
   });
 
   describe('verifyCommentById function', () => {
@@ -251,6 +251,7 @@ describe('CommentRepositoryPostgres', () => {
         username: 'userpertama',
         date: now.toISOString(),
         content: 'ini adalah komentar',
+        likeCount: 0,
         isDeleted: false,
         replies: [],
       }));
@@ -259,6 +260,7 @@ describe('CommentRepositoryPostgres', () => {
         username: 'userpertama',
         date: now.toISOString(),
         content: 'ini adalah komentar kedua',
+        likeCount: 0,
         isDeleted: true,
         replies: [],
       }));

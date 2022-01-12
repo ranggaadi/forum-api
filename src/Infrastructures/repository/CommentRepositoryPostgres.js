@@ -86,23 +86,15 @@ class CommentRepositoryPostgres extends CommentRepository {
 
     const res = await this._pool.query(query);
 
-    const threadComments = [];
-
-    // eslint-disable-next-line no-restricted-syntax
-    for (const row of res.rows) {
-      threadComments.push(
-        new CommentDetails({
-          id: row.id,
-          username: row.username,
-          date: row.created_at.toISOString(),
-          content: row.content,
-          isDeleted: row.is_delete,
-          replies: [],
-        }),
-      );
-    }
-
-    return threadComments;
+    return res.rows.map((row) => new CommentDetails({
+      id: row.id,
+      username: row.username,
+      date: row.created_at.toISOString(),
+      content: row.content,
+      likeCount: 0,
+      isDeleted: row.is_delete,
+      replies: [],
+    }));
   }
 }
 

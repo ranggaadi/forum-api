@@ -23,8 +23,7 @@ describe('Add reply to comment use case', () => {
     const mockCommentRepo = new CommentRepository();
     const mockReplyRepo = new ReplyRepository();
 
-    mockCommentRepo.verifyCommentOnThreadById = jest.fn()
-      .mockImplementation(() => Promise.resolve());
+    mockCommentRepo.verifyCommentOnThreadById = jest.fn(() => Promise.resolve());
     mockReplyRepo.addReplyToCommentOnThread = jest.fn()
       .mockImplementation(() => Promise.resolve(expectedOutput));
 

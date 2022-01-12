@@ -45,6 +45,9 @@ DomainErrorTranslator._directories = {
 
   'DELETE_REPLY_USE_CASE.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('property payload tidak lengkap'),
   'DELETE_REPLY_USE_CASE.PAYLOAD_NOT_MEET_DATA_SPECIFICATION': new InvariantError('tipe data payload tidak sesuai'),
+
+  'LIKE_COMMENT_ACTION_USE_CASE.PAYLOAD_NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('property payload tidak lengkap'),
+  'LIKE_COMMENT_ACTION_USE_CASE.PAYLOAD_NOT_MEET_DATA_SPECIFICATION': new InvariantError('tipe data payload tidak sesuai'),
 };
 
 module.exports = DomainErrorTranslator;

@@ -52,7 +52,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
 
     const res = await this._pool.query(query);
 
-    const threadDetails = new ThreadDetails({
+    return new ThreadDetails({
       id: res.rows[0].id,
       title: res.rows[0].title,
       body: res.rows[0].body,
@@ -60,7 +60,6 @@ class ThreadRepositoryPostgres extends ThreadRepository {
       username: res.rows[0].username,
       comments: [],
     });
-    return threadDetails;
   }
 }
 
