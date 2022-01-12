@@ -16,8 +16,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: SSH and deploy app
       - uses: appleboy/ssh-action@master
+      - name: SSH and deploy app
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
